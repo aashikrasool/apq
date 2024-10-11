@@ -21,11 +21,18 @@ print(args)
 if __name__ == '__main__':
     exp_dir = 'exps/{}'.format(args.exp_name)
 
-    arch_path = '{}/arch'.format(exp_dir)
-    tmp_lst = json.load(open(arch_path, 'r'))
+    # Define the path to the architecture file (assuming the file is named 'arch.json')
+    arch_file_path = os.path.join(exp_dir, 'arch', 'arch.json')
+
+    # Check if the architecture file exists
+    assert os.path.exists(arch_file_path), f"Architecture file does not exist: {arch_file_path}"
+
+    # Load architecture and quantization info from the JSON file
+    with open(arch_file_path, 'r') as f:
+        tmp_lst = json.load(f)
     info, q_info = tmp_lst
-    print(info)
-    print(q_info)
+    print("Architecture Info:", info)
+    print("Quantization Info:", q_info)
 
     DynamicSeparableConv2d.KERNEL_TRANSFORM_MODE = 1
     DynamicSeparableQConv2d.KERNEL_TRANSFORM_MODE = 1

@@ -13,7 +13,7 @@ parser.add_argument('--prepare', type=str, default=None, choices=['acc', 'acc_qu
 parser.add_argument('--acc_train_sample', type=int, default=None)
 parser.add_argument('--mode', type=str, default='evolution', choices=['evolution'])
 parser.add_argument('--constraint', type=float, default=120)
-parser.add_argument('--exp_name', type=str, default='test')
+parser.add_argument('--exp_name', type=str, default='search')
 args, _ = parser.parse_known_args()
 print(args)
 
@@ -38,12 +38,15 @@ def main():
         dic = {}
         whole = {}
         candidate_archs = []
+
         out_dir = 'exps/{}'.format(args.exp_name)
         lats = []
+        # in here they used 12.80 as latency limit
         for i in [args.constraint]:
             res, info, t = evolution_gather(parser, force_latency=i)
             acc, arch, lat = info
             print((i, res, lat, arch, acc))
+            # here they check i is already there or not or acc higher one
             if i not in dic or dic[i] < acc:
                 dic[i] = acc
                 whole[i] = (t, res, lat, arch, acc)
@@ -54,6 +57,5 @@ def main():
         json.dump(candidate_archs[0], open('{}/arch'.format(out_dir), 'w'))
         json.dump(lats, open('{}/lat'.format(out_dir), 'w'))
 
-
-if __name__ == '__main__':
-    main()
+    if __name__ == '__main__':
+        main()
